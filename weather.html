@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecasts & Alerts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f8ff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #location-input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+        #search-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .weather-display, .alerts {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .weather-info {
+            display: flex;
+            align-items: center;
+        }
+        .weather-icon {
+            font-size: 80px;
+            margin-right: 20px;
+        }
+        .temperature {
+            font-size: 48px;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+        .details {
+            margin-left: auto;
+        }
+        .alert-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .forecast {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .forecast-day {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .hidden {
+            display: none;
+        }
+        .back-button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Weather Forecasts & Alerts</h1>
+            <div class="search-box">
+                <input type="text" id="location-input" placeholder="Enter city or zip code">
+                <button id="search-btn">Search</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="loading hidden" id="loading">
+                Fetching weather data...
+            </div>
+            
+            <div class="weather-display hidden" id="weather-display">
+                <!-- Weather data will be displayed here -->
+            </div>
+            
+            <div class="alerts hidden" id="alerts">
+                <!-- Weather alerts will be displayed here -->
+            </div>
+            
+            <button class="back-button" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBtn = document.getElementById('search-btn');
+            const locationInput = document.getElementById('location-input');
+            const loadingElement = document.getElementById('loading');
+            const weatherDisplay = document.getElementById('weather-display');
+            const alertsElement = document.getElementById('alerts');
+            
+            // Example locations for demo
+            const exampleLocations = ["New York", "London", "Tokyo", "Paris", "Delhi", "Mumbai", "Bangalore", "Chennai", "Kolkata"];
+            
+            // Set random example location on page load
+            locationInput.value = exampleLocations[Math.floor(Math.random() * exampleLocations.length)];
+            
+            searchBtn.addEventListener('click', fetchWeatherData);
+            
+            // Also fetch weather when pressing Enter in the input field
+            locationInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    fetchWeatherData();
+                }
+            });
+            
+            // Fetch weather for the example location on page load
+            setTimeout(fetchWeatherData, 500);
+            
+            async function fetchWeatherData() {
+                const location = locationInput.value.trim();
+                if (!location) return;
+                
+                // Show loading message
+                loadingElement.classList.remove('hidden');
+                weatherDisplay.classList.add('hidden');
+                alertsElement.classList.add('hidden');
+                
+                try {
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Generate mock data based on location
+                    const mockData = generateMockWeatherData(location);
+                    displayWeatherData(mockData);
+                    
+                    // Generate mock alerts (50% chance of having alerts)
+                    const mockAlerts = Math.random() > 0.5 ? generateMockAlerts(location) : [];
+                    displayAlerts(mockAlerts);
+                    
+                } catch (error) {
+                    alert("Error fetching weather data: " + error.message);
+                } finally {
+                    loadingElement.classList.add('hidden');
+                }
+            }
+            
+            function generateMockWeatherData(location) {
+                // Generate random but realistic weather data
+                const conditions = ["Sunny", "Partly Cloudy", "Cloudy", "Rainy", "Thunderstorm", "Snowy"];
+                const condition = conditions[Math.floor(Math.random() * conditions.length)];
+                
+                // Base temp on condition
+                let baseTemp = 20;
+                if (condition === "Sunny") baseTemp = 28;
+                if (condition === "Rainy") baseTemp = 18;
+                if (condition === "Snowy") baseTemp = -2;
+                
+                // Add some randomness
+                const temperature = Math.round(baseTemp + (Math.random() * 10 - 5));
+                const humidity = Math.round(40 + Math.random() * 50);
+                const wind = Math.round(5 + Math.random() * 20);
+                
+                // Generate 3-day forecast
+                const forecast = [];
+                for (let i = 1; i <= 3; i++) {
+                    const dayTemp = temperature + (Math.random() * 6 - 3);
+                    forecast.push({
+                        day: new Date(Date.now() + i * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { weekday: 'long' }),
+                        high: Math.round(dayTemp + 3),
+                        low: Math.round(dayTemp - 3),
+                        condition: conditions[Math.floor(Math.random() * conditions.length)]
+                    });
+                }
+                
+                return {
+                    location: location,
+                    temperature: temperature,
+                    condition: condition,
+                    icon: getWeatherIcon(condition),
+                    humidity: humidity,
+                    wind: wind,
+                    forecast: forecast
+                };
+            }
+            
+            function getWeatherIcon(condition) {
+                const icons = {
+                    "Sunny": "☀️",
+                    "Partly Cloudy": "⛅",
+                    "Cloudy": "☁️",
+                    "Rainy": "🌧️",
+                    "Thunderstorm": "⛈️",
+                    "Snowy": "❄️"
+                };
+                return icons[condition] || "🌈";
+            }
+            
+            function generateMockAlerts(location) {
+                const alertTypes = [
+                    { severity: "Moderate", title: "Heat Advisory", description: "High temperatures expected in the next 24 hours" },
+                    { severity: "High", title: "Thunderstorm Warning", description: "Severe thunderstorms expected this afternoon" },
+                    { severity: "Low", title: "Air Quality Alert", description: "Moderate air quality expected today" },
+                    { severity: "High", title: "Winter Storm Warning", description: "Heavy snowfall expected tomorrow" },
+                    { severity: "High", title: "Flood Warning", description: "Heavy rains may cause flooding in low-lying areas" },
+                    { severity: "Moderate", title: "Frost Advisory", description: "Frost expected overnight, protect sensitive plants" }
+                ];
+                
+                // Return 1-2 random alerts
+                const count = Math.floor(Math.random() * 2) + 1;
+                const alerts = [];
+                for (let i = 0; i < count; i++) {
+                    alerts.push(alertTypes[Math.floor(Math.random() * alertTypes.length)]);
+                }
+                return alerts;
+            }
+            
+            function displayWeatherData(data) {
+                weatherDisplay.innerHTML = `
+                    <h2>Current Weather in ${data.location}</h2>
+                    <div class="weather-info">
+                        <div class="weather-icon">${data.icon}</div>
+                        <div class="temperature">${data.temperature}°C</div>
+                        <div class="details">
+                            <div>Condition: ${data.condition}</div>
+                            <div>Humidity: ${data.humidity}%</div>
+                            <div>Wind: ${data.wind} km/h</div>
+                        </div>
+                    </div>
+                    <h3>3-Day Forecast</h3>
+                    <div class="forecast">
+                        ${data.forecast.map(day => `
+                            <div class="forecast-day">
+                                <strong>${day.day}</strong><br>
+                                ${getWeatherIcon(day.condition)}<br>
+                                High: ${day.high}°C<br>
+                                Low: ${day.low}°C<br>
+                                ${day.condition}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                
+                weatherDisplay.classList.remove('hidden');
+            }
+            
+            function displayAlerts(alerts) {
+                if (alerts.length === 0) {
+                    alertsElement.classList.add('hidden');
+                    return;
+                }
+                
+                alertsElement.innerHTML = `
+                    <h2>Weather Alerts for ${locationInput.value}</h2>
+                    ${alerts.map(alert => `
+                        <div class="alert-item">
+                            <strong>${alert.severity} - ${alert.title}</strong><br>
+                            ${alert.description}
+                        </div>
+                    `).join('')}
+                `;
+                
+                alertsElement.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

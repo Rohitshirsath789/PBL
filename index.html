@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroAssist - Login & Sign-Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('https://images.pexels.com/photos/2165688/pexels-photo-2165688.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            flex-direction: column;
+        }
+        .logo {
+            text-align: left;
+            margin-top: 4cm;
+            margin-right: 25cm;
+        }
+        .logo img {
+            width: 300px;
+            height: auto;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            width: 350px;
+            padding: 25px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-left: 20cm;
+            margin-bottom: 5cm;
+        }
+        input, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+        button:hover {
+            transform: scale(1.05);
+            background-color: #1e7e34;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+            .logo img {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="image/logo1.png" alt="Logo">
+    </div>
+
+    <div class="container" id="login-container">
+        <h2>Login</h2>
+        <input type="text" id="login-username" placeholder="Username" required>
+        <input type="password" id="login-password" placeholder="Password" required>
+        <select id="login-role">
+            <option value="Merchant">Merchant</option>
+            <option value="Farmer">Farmer</option>
+        </select>
+        <button onclick="validateLogin()">Login</button>
+        <p id="login-error" style="color: red;"></p>
+        <p>Don't have an account? <a href="#" onclick="showSignUp()">Sign Up</a></p>
+    </div>
+
+    <div class="container" id="signup-container" style="display: none;">
+        <h2>Sign Up</h2>
+        <input type="text" id="signup-username" placeholder="Choose a Username" required>
+        <input type="password" id="signup-password" placeholder="Choose a Password" required>
+        <select id="signup-role">
+            <option value="Merchant">Merchant</option>
+            <option value="Farmer">Farmer</option>
+        </select>
+        <input type="text" id="signup-name" placeholder="Your Name" required>
+        <input type="text" id="signup-mobile" placeholder="Mobile Number" required>
+        <button onclick="registerUser()">Sign Up</button>
+        <p id="signup-error" style="color: red;"></p>
+        <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+    </div>
+
+    <script>
+        function showSignUp() {
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("signup-container").style.display = "block";
+        }
+
+        function showLogin() {
+            document.getElementById("signup-container").style.display = "none";
+            document.getElementById("login-container").style.display = "block";
+        }
+
+        function registerUser() {
+            var username = document.getElementById("signup-username").value;
+            var password = document.getElementById("signup-password").value;
+            var role = document.getElementById("signup-role").value;
+            var name = document.getElementById("signup-name").value;
+            var mobile = document.getElementById("signup-mobile").value;
+
+            if (username && password && name && mobile) {
+                var users = JSON.parse(localStorage.getItem("users")) || [];
+                var existingUser = users.find(user => user.username === username);
+
+                if (existingUser) {
+                    document.getElementById("signup-error").innerText = "Username already exists!";
+                    return;
+                }
+
+                users.push({ username, password, role, name, mobile });
+                localStorage.setItem("users", JSON.stringify(users));
+
+                alert("Sign-up successful! Please login.");
+                showLogin();
+            } else {
+                document.getElementById("signup-error").innerText = "All fields are required.";
+            }
+        }
+
+        function validateLogin() {
+            var username = document.getElementById("login-username").value;
+            var password = document.getElementById("login-password").value;
+            var role = document.getElementById("login-role").value;
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            var user = users.find(u => u.username === username && u.password === password && u.role === role);
+
+            if (user) {
+                alert("Login successful as " + role + "!");
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                window.location.href = "dashboard.html";
+            } else {
+                document.getElementById("login-error").innerText = "Invalid username, password, or role!";
+            }
+        }
+    </script>
+</body>
+</html>

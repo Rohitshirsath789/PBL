@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Schemes | AgroAssist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 8px 15px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            background-color: #007bff;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 100px auto 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .scheme-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+        .scheme-card h3 {
+            color: #28a745;
+            margin-top: 0;
+        }
+        .scheme-card p {
+            color: #555;
+        }
+        .scheme-card .date {
+            color: #777;
+            font-size: 0.9em;
+        }
+        .scheme-card .link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="image/logo1.png" alt="AgroAssist Logo">
+        <h1>Government Schemes</h1>
+        <div class="buttons">
+            <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Latest Government Schemes</h1>
+        
+        <div class="scheme-card">
+            <h3>PM Kisan Samman Nidhi</h3>
+            <p>Income support scheme providing ₹6,000 per year to small and marginal farmers</p>
+            <div class="date">Last updated: 15 June 2023</div>
+            <a href="https://pmkisan.gov.in" target="_blank" class="link">Visit Official Website →</a>
+        </div>
+        
+        <div class="scheme-card">
+            <h3>Soil Health Card Scheme</h3>
+            <p>Provides farmers with soil health cards containing crop-wise recommendations</p>
+            <div class="date">Last updated: 1 May 2023</div>
+            <a href="https://soilhealth.dac.gov.in" target="_blank" class="link">Visit Official Website →</a>
+        </div>
+        
+        <div class="scheme-card">
+            <h3>Pradhan Mantri Fasal Bima Yojana</h3>
+            <p>Crop insurance scheme to protect against yield losses due to natural calamities</p>
+            <div class="date">Last updated: 20 April 2023</div>
+            <a href="https://pmfby.gov.in" target="_blank" class="link">Visit Official Website →</a>
+        </div>
+        
+        <div class="scheme-card">
+            <h3>National Mission on Agricultural Extension</h3>
+            <p>Scheme to strengthen agricultural extension services to farmers</p>
+            <div class="date">Last updated: 10 March 2023</div>
+            <a href="https://agricoop.nic.in" target="_blank" class="link">Visit Official Website →</a>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            if (!localStorage.getItem("currentUser")) {
+                window.location.href = "index.html";
+            }
+        };
+    </script>
+</body>
+</html>

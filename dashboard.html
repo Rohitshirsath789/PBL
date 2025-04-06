@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroAssist - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://images.pexels.com/photos/2165688/pexels-photo-2165688.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .header img {
+            width: 100px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-right: 50px;
+        }
+        .buttons button {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .logout {
+            background-color: red;
+            color: white;
+        }
+        .login {
+            background-color: blue;
+            color: white;
+        }
+        .container {
+            padding: 80px 20px 20px;
+            width: 70%;
+            margin-top: 50px;
+        }
+        .feature {
+            background: white;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .feature:hover {
+            transform: scale(1.02);
+        }
+        .users {
+            width: 30%;
+            padding: 80px 20px 20px;
+            background: white;
+            border-left: 2px solid #ccc;
+            overflow-y: auto;
+            margin-top: 50px;
+            height: calc(100vh - 50px);
+            position: fixed;
+            right: 0;
+        }
+        .users h3 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .action-buttons button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .delete-button {
+            background-color: red;
+            color: white;
+        }
+        .update-button {
+            background-color: blue;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="image/logo1.png" alt="Logo">
+        <h1>AgroAssist Dashboard</h1>
+        <div class="buttons">
+            <button class="logout" onclick="logout()">Logout</button>
+            <button class="login" onclick="goToLogin()">Login</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Welcome to AgroAssist</h2>
+        <div class="feature" onclick="window.location.href='market-prices.html'">
+            <h3>Real-time Market Prices</h3>
+            <p>Fetching latest prices...</p>
+        </div>
+        <div class="feature" onclick="window.location.href='weather.html'">
+            <h3>Weather Forecasts & Alerts</h3>
+            <p>Click to view weather data...</p>
+        </div>
+        <div class="feature" onclick="window.location.href='govt-schemes.html'">
+            <h3>Government Scheme Awareness</h3>
+            <p>Latest updates on government schemes.</p>
+        </div>
+        <div class="feature" onclick="window.location.href='crop-disease.html'">
+            <h3>Image-based Crop Disease Detection</h3>
+            <p>Upload an image to analyze crop health.</p>
+        </div>
+        <div class="feature" onclick="window.location.href='language-support.html'">
+            <h3>Multilingual Support</h3>
+            <p>Select your preferred language.</p>
+        </div>
+    </div>
+    
+    <div class="users">
+        <h3>Registered Merchants</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Product</th>
+                    <th>Price Per Kg</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="merchantTable"></tbody>
+        </table>
+
+        <h3>Registered Farmers</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Address</th>
+                    <th>Product</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="farmerTable"></tbody>
+        </table>
+    </div>
+
+    <script>
+        function logout() {
+            localStorage.removeItem("currentUser");
+            alert("Logging out...");
+            window.location.href = "index.html";
+        }
+
+        function goToLogin() {
+            window.location.href = "index.html";
+        }
+
+        function loadUsers() {
+            const merchantTable = document.getElementById("merchantTable");
+            const farmerTable = document.getElementById("farmerTable");
+            merchantTable.innerHTML = "";
+            farmerTable.innerHTML = "";
+
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            users.forEach((user, index) => {
+                let actions = "";
+                if (currentUser && currentUser.mobile === user.mobile) {
+                    actions = `
+                        <div class="action-buttons">
+                            <button class="update-button" onclick="updateUser(${index})">Update</button>
+                            <button class="delete-button" onclick="deleteUser(${index})">Delete</button>
+                        </div>
+                    `;
+                }
+
+                if (user.role === "Merchant") {
+                    merchantTable.innerHTML += `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.mobile}</td>
+                            <td>${user.crops || "-"}</td>
+                            <td>${user.price || "-"}</td>
+                            <td>${actions}</td>
+                        </tr>
+                    `;
+                } else if (user.role === "Farmer") {
+                    const produce = [user.grain, user.fruit, user.vegetable].filter(item => item).join(", ");
+                    farmerTable.innerHTML += `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.mobile}</td>
+                            <td>${user.address || "-"}</td>
+                            <td>${produce || "-"}</td>
+                            <td>${actions}</td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        function deleteUser(index) {
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            users.splice(index, 1);
+            localStorage.setItem("users", JSON.stringify(users));
+            loadUsers();
+        }
+
+        function updateUser(index) {
+            var users = JSON.parse(localStorage.getItem("users")) || [];
+            var user = users[index];
+
+            let updatedName = prompt("Enter new name:", user.name);
+            let updatedMobile = prompt("Enter new mobile:", user.mobile);
+            let updatedCrops = user.crops;
+            let updatedPrice = user.price;
+            let updatedGrain = user.grain;
+            let updatedFruit = user.fruit;
+            let updatedVegetable = user.vegetable;
+            let updatedAddress = user.address;
+
+            if (user.role === "Merchant") {
+                updatedCrops = prompt("Enter new crops/fruits/vegetables:", user.crops);
+                updatedPrice = prompt("Enter new price per unit:", user.price);
+            } else if (user.role === "Farmer") {
+                updatedGrain = prompt("Enter new crops/fruits/vegetables:", user.grain);
+                updatedAddress = prompt("Enter new address:", user.address);
+            }
+
+            if (updatedName && updatedMobile) {
+                user.name = updatedName;
+                user.mobile = updatedMobile;
+                if (user.role === "Merchant") {
+                    user.crops = updatedCrops;
+                    user.price = updatedPrice;
+                } else if (user.role === "Farmer") {
+                    user.grain = updatedGrain;
+                    user.fruit = updatedFruit;
+                    user.vegetable = updatedVegetable;
+                    user.address = updatedAddress;
+                }
+                users[index] = user;
+                localStorage.setItem("users", JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        window.onload = function () {
+            var currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+            if (!currentUser) {
+                alert("Please login first!");
+                window.location.href = "index.html";
+            } else {
+                document.querySelector("h2").innerText = "Welcome, " + currentUser.name;
+                loadUsers();
+            }
+        };
+    </script>
+</body>
+</html>
